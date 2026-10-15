@@ -1,50 +1,45 @@
 # Yūgen Core 影
-
 **A world beyond the ordinary.** A custom Discord bot for the Yūgen community.
 
-## Current features
-
+## Features
 - Branded welcome message when a member joins (requires the Server Members Intent).
-- `/setup` creates the self-role menu in `#roles-and-interests` and creates any missing roles.
-- Self-role buttons for Member, MLBB, Competitive Player, Culture Explorer, Creative, and Event Ping.
-- `/tryout` opens a private application form; applications are sent to the staff-only `#moderation-log` channel.
-- `/about` displays the Yūgen identity and palette.
-- Slash commands register to the configured server on startup.
+- `/setup` creates any missing self-assignable roles and posts an interactive role menu in `#roles-and-interests`.
+- Members can toggle Member, MLBB, Competitive Player, Culture Explorer, Creative, and Event Ping roles.
+- `/tryout` opens a competitive application form and sends submissions to the staff-only `#moderation-log`.
+- `/about` explains the Yūgen identity and palette.
+- Registers guild slash commands on startup.
 
-## Required environment variables
+## Upload to Spaceify (root startup file)
+This package is intentionally arranged for a root-level startup file:
+```
+/home/container/
+├── index.js
+├── package.json
+├── .env.example
+├── .gitignore
+├── README.md
+└── SPACEIFY_SETUP.md
+```
+The startup file is **`index.js`**. The npm start command is **`node index.js`**. Do not move `index.js` into a `src` folder.
 
-Set these in your hosting provider's **environment/secret settings**, never in source code:
+## Required private environment variables
+Set these in Spaceify's **Variables / Environment** panel. Do not commit a real `.env` file or paste the bot token into chat.
+- `DISCORD_TOKEN`: token from Discord Developer Portal → Bot → Reset Token / Token.
+- `DISCORD_CLIENT_ID`: Application ID from Developer Portal → General Information.
+- `GUILD_ID`: `1560329418059153449`.
 
-- `DISCORD_TOKEN` — bot token from Discord Developer Portal.
-- `DISCORD_CLIENT_ID` — Application ID from General Information.
-- `GUILD_ID` — Yūgen server ID (already shown in `.env.example`).
+## Discord Developer Portal and permissions
+1. Enable **Server Members Intent** under Bot → Privileged Gateway Intents if you want join-welcome messages.
+2. Invite the bot using OAuth2 URL Generator with `bot` and `applications.commands` scopes.
+3. Grant only the permissions it needs: View Channels, Send Messages, Embed Links, Read Message History, and Manage Roles. Do **not** grant Administrator.
+4. In Server Settings → Roles, move the bot's role above the six self-assignable roles.
+5. Ensure the bot can view and send messages in `#welcome`, `#roles-and-interests`, and the private `#moderation-log`.
 
-## Discord setup
+## Start and verify
+- Install dependencies with `npm install` (or the host's install step).
+- Start with `npm start` or configure the panel to run `index.js`.
+- Successful startup should log `Yūgen Core online as ...` and `Guild slash commands registered.`
+- Run `/setup` once as a server administrator who has **Manage Roles** and **Manage Channels**.
 
-1. Create an application at https://discord.com/developers/applications and add a Bot user.
-2. Under **Bot**, enable **Server Members Intent** for welcome messages.
-3. Invite the bot using OAuth2 URL Generator with `bot` and `applications.commands` scopes. Permissions needed: View Channels, Send Messages, Embed Links, Read Message History, Manage Roles. Do not grant Administrator.
-4. In Server Settings → Roles, move the bot's role **above** the self-assignable roles it must grant. The bot needs Manage Roles.
-5. Add the three environment variables to the host and deploy with `npm start`.
-6. Run `/setup` as a server administrator with Manage Roles and Manage Channels permissions.
-
-## Free hosting recommendation
-
-For a gateway-connected Discord bot that should stay online 24/7, the strongest genuinely free option to investigate is **Oracle Cloud Infrastructure Always Free Compute**. It offers eligible VM resources at no charge, subject to account, region, capacity, and usage limits. Sign-up usually requires phone and card verification; Oracle says the card is not charged unless you upgrade. Always select resources explicitly marked **Always Free** and never upgrade to a paid plan just to make the bot work.
-
-Official links:
-- Oracle Free Tier: https://www.oracle.com/cloud/free/
-- Oracle Always Free resources: https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
-
-Render's free web services spin down after 15 minutes without inbound traffic, so it is not a reliable fit for a persistent Discord gateway bot. A free tier can change; check current limits before deploying.
-
-## Security notes
-
-- Never commit `.env`, bot tokens, or recovery codes.
-- If a token is exposed, reset it immediately in Discord Developer Portal.
-- The bot does not request Administrator permissions.
-- Review application content and staff channel permissions before accepting real applications.
-
-## Stack
-
-Node.js 20+ · discord.js 14 · SQLite not yet required (current version is stateless).
+## Security
+Never share or commit the bot token. If it is exposed, reset it immediately in the Developer Portal. The repository does not contain a real token.
